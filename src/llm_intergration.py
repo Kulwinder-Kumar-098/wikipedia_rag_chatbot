@@ -11,12 +11,10 @@ if str(_SRC_DIR) not in sys.path:
 from groq import Groq
 from dotenv import load_dotenv
 
-# Load .env from project root (one level up from src/)
 load_dotenv(_SRC_DIR.parent / ".env")
 
-# ── Groq config ───────────────────────────────────────────────────────────
-GROQ_MODEL = "llama-3.1-8b-instant"   # replaces decommissioned llama3-8b-8192
-                                       # alternatives: "llama-3.3-70b-versatile", "gemma2-9b-it"
+
+GROQ_MODEL = "llama-3.1-8b-instant"   
 
 def build_prompt(question: str, retrieved_chunks: list[dict]) -> str:
     """Format retrieved chunks + question into a grounded RAG prompt."""

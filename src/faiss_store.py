@@ -19,7 +19,7 @@ def build_index(embeddings: np.ndarray) -> faiss.Index:
 
 
 if __name__ == "__main__":
-    # ── Load embeddings ──────────────────────────────────────────────────
+    
     embeddings_path = EMBEDDINGS_DIR / "embeddings.npy"
     if not embeddings_path.exists():
         raise FileNotFoundError(
@@ -28,7 +28,7 @@ if __name__ == "__main__":
         )
     embeddings = np.load(embeddings_path)
 
-    # ── Load chunks (written by step3 into data/processed/) ─────────────
+   
     chunks_path = PROCESSED_DIR / "chunks.json"
     if not chunks_path.exists():
         raise FileNotFoundError(
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     print(f"Loaded {embeddings.shape[0]} embeddings of dim {embeddings.shape[1]}")
     print(f"Loaded {len(chunks)} chunks")
 
-    # ── Build & save FAISS index ─────────────────────────────────────────
+  
     index = build_index(embeddings)
     print(f"Index built. Total vectors indexed: {index.ntotal}")
 

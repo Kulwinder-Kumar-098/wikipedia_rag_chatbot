@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 import faiss
 
-# Ensure src/ is on the path so sibling modules are importable
 _SRC_DIR = Path(__file__).resolve().parent
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))

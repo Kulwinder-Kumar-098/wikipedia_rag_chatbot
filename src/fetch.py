@@ -15,7 +15,6 @@ def fetch_article(title: str, lang: str = "en") -> str:
 
 
 if __name__ == "__main__":
-    # Default article, override via command line: python step1_fetch.py "History of Spaceflight"
     title = sys.argv[1] if len(sys.argv) > 1 else "Artificial intelligence"
 
     text = fetch_article(title)

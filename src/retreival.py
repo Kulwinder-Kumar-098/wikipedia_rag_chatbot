@@ -21,7 +21,7 @@ def load_embedder():
     if not method_path.exists():
         raise FileNotFoundError(
             f"Embedding method file not found: {method_path}\n"
-            "Run step4_embed.py first."
+            "Run embeddings.py first."
         )
 
     method = method_path.read_text(encoding="utf-8").strip()
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     if not index_path.exists():
         raise FileNotFoundError(
             f"FAISS index not found: {index_path}\n"
-            "Run step5_faiss.py first."
+            "Run faiss_store.py first."
         )
     index = faiss.read_index(str(index_path))
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     if not chunks_path.exists():
         raise FileNotFoundError(
             f"Chunks file not found: {chunks_path}\n"
-            "Run step3_chunk.py first."
+            "Run chunks.py first."
         )
     with open(chunks_path, "r", encoding="utf-8") as f:
         chunks = json.load(f)

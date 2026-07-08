@@ -2,7 +2,7 @@ import json
 from langchain_community.document_loaders import TextLoader,DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-dir='C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\raw'
+dir='C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\processed'
 CHUNK_SIZE = 500     
 CHUNK_OVERLAP = 50    
 

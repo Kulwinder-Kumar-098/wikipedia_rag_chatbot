@@ -24,7 +24,7 @@ if __name__ == "__main__":
     if not embeddings_path.exists():
         raise FileNotFoundError(
             f"Embeddings not found: {embeddings_path}\n"
-            "Run step4_embed.py first."
+            "Run embeddings.py first."
         )
     embeddings = np.load(embeddings_path)
 
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     if not chunks_path.exists():
         raise FileNotFoundError(
             f"Chunks file not found: {chunks_path}\n"
-            "Run step3_chunk.py first."
+            "Run chunks.py first."
         )
     with open(chunks_path, "r", encoding="utf-8") as f:
         chunks = json.load(f)

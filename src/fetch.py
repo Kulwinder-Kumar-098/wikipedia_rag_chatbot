@@ -15,7 +15,7 @@ def fetch_article(title: str, lang: str = "en") -> str:
 
 
 if __name__ == "__main__":
-    title = sys.argv[1] if len(sys.argv) > 1 else "Artificial intelligence"
+    title = sys.argv[1] if len(sys.argv) > 1 else "History of spaceflight"
 
     text = fetch_article(title)
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     print(text[:500])
 
     # Save raw text to disk for the next steps to use
-    out_path = "C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\raw\\article_raw.txt"
+    out_path = "C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\raw\\article_raw1.txt"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(text)
     print(f"\nSaved full article text to {out_path}")

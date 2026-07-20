@@ -10,11 +10,11 @@ if str(_SRC_DIR) not in sys.path:
 
 from groq import Groq
 from dotenv import load_dotenv
+from config import LLM_MODEL, INDEX_DIR, PROCESSED_DIR
 
 load_dotenv(_SRC_DIR.parent / ".env")
 
-
-GROQ_MODEL = "llama-3.1-8b-instant"   
+GROQ_MODEL = LLM_MODEL  
 
 def build_prompt(question: str, retrieved_chunks: list[dict]) -> str:
     """Format retrieved chunks + question into a grounded RAG prompt."""
@@ -62,7 +62,6 @@ if __name__ == "__main__":
     if _src not in sys.path:
         sys.path.insert(0, _src)
 
-    from config import INDEX_DIR, PROCESSED_DIR
     from retreival import load_embedder, search
     import faiss
     import json

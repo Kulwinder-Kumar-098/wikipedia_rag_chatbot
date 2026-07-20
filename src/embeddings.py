@@ -1,10 +1,17 @@
 import json
+import sys
+from pathlib import Path
+
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import EMBEDDING_MODEL, PROCESSED_DIR, EMBEDDINGS_DIR
 
-MODEL_NAME = "all-MiniLM-L6-v2"
-path_to_chunks = "C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\processed\\chunks.json"
+MODEL_NAME = EMBEDDING_MODEL
+path_to_chunks = PROCESSED_DIR / "chunks.json"
+output_path = EMBEDDINGS_DIR / "embeddings.npy"
+method_path = EMBEDDINGS_DIR / "embedding_method.txt"
 
 def load_chunks(path) -> list[dict]:
     with open(path, "r", encoding="utf-8") as f:
@@ -37,8 +44,9 @@ if __name__ == "__main__":
     print(f"Embedding method used: {method}")
     print(f"Embeddings shape: {embeddings.shape}")
 
-    np.save("C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\embeddings\\embeddings.npy", embeddings)
-    with open("C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\embeddings\\embedding_method.txt", "w") as f:
-        f.write(method)
+    EMBEDDINGS_DIR.mkdir(parents=True, exist_ok=True)
+    np.save(output_path, embeddings)
+    method_path.write_text(method, encoding="utf-8")
 
-    print("Saved embeddings.npy and embedding_method.txt to disk.")
+    print(f"Saved embeddings to {output_path}")
+    print(f"Saved embedding method to {method_path}")

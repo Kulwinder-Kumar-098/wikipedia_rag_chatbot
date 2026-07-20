@@ -1,17 +1,19 @@
 import json
-from langchain_community.document_loaders import TextLoader,DirectoryLoader
+import sys
+from pathlib import Path
+
+from langchain_community.document_loaders import TextLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-dir='C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\processed'
-CHUNK_SIZE = 500     
-CHUNK_OVERLAP = 50    
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import CHUNK_SIZE, CHUNK_OVERLAP, PROCESSED_DIR
 
-def chunk_with_langchain(file_path, chunk_size= CHUNK_SIZE, overlap=CHUNK_OVERLAP):
+def chunk_with_langchain(file_path, chunk_size=CHUNK_SIZE, overlap=CHUNK_OVERLAP):
 
-    loader = DirectoryLoader(dir,
+    loader = DirectoryLoader(str(file_path),
                              glob="*.txt",
                              loader_cls=TextLoader,
-                             loader_kwargs={"encoding": "utf-8"} 
+                             loader_kwargs={"encoding": "utf-8"}
                              )
     documents = loader.load()
     
@@ -30,7 +32,7 @@ def chunk_with_langchain(file_path, chunk_size= CHUNK_SIZE, overlap=CHUNK_OVERLA
 
 
 if __name__ == "__main__":
-    chunks = chunk_with_langchain(dir, CHUNK_SIZE, CHUNK_OVERLAP)
+    chunks = chunk_with_langchain(PROCESSED_DIR, CHUNK_SIZE, CHUNK_OVERLAP)
     
     print(f"Total chunks created: {len(chunks)}")
     print(f"Avg chunk length: {sum(len(c) for c in chunks) / len(chunks):.0f} chars")
@@ -44,7 +46,8 @@ if __name__ == "__main__":
 
     # Save chunks as JSON: list of {"id": int, "text": str}
     records = [{"id": i, "text": c} for i, c in enumerate(chunks)]
-    out_path = "C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\processed\\chunks.json"
+    out_path = PROCESSED_DIR / "chunks.json"
+    PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(records, f, indent=2)
     print(f"\nSaved {len(records)} chunks to {out_path}")

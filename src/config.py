@@ -9,5 +9,5 @@ INDEX_DIR = ROOT_DIR / "index"
 
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
-EMBEDDING_MODEL = "text-embedding-3-small"
-LLM_MODEL = "claude-3-5-sonnet-latest"
+EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+LLM_MODEL = "llama-3.1-8b-instant"

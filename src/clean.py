@@ -29,7 +29,7 @@ def clean_text(raw_text: str) -> str:
 
 if __name__ == "__main__":
 
-    in_path = RAW_DIR / "article_raw1.txt"
+    in_path = RAW_DIR / "article_raw.txt"
     if not in_path.exists():
         raise FileNotFoundError(
             f"Input file not found: {in_path}\n"
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
 
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = PROCESSED_DIR / "article_clean1.txt"
+    out_path = PROCESSED_DIR / "article_clean.txt"
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(cleaned)
     print(f"\nSaved cleaned text to {out_path}")

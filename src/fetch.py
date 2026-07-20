@@ -1,5 +1,11 @@
-import wikipediaapi
 import sys
+from pathlib import Path
+
+import wikipediaapi
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from config import RAW_DIR
+
 
 def fetch_article(title: str, lang: str = "en") -> str:
     wiki = wikipediaapi.Wikipedia(
@@ -25,7 +31,8 @@ if __name__ == "__main__":
     print(text[:500])
 
     # Save raw text to disk for the next steps to use
-    out_path = "C:\\Users\\hp\\OneDrive\\Desktop\\The_Wikipedia_RAG_ChatBot\\data\\raw\\article_raw1.txt"
+    out_path = RAW_DIR / "article_raw.txt"
+    RAW_DIR.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(text)
     print(f"\nSaved full article text to {out_path}")

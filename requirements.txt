@@ -8,8 +8,9 @@ scikit-learn
 langchain
 langchain-community
 langchain-text-splitters
-langchain-groq
 langchain-chroma
 python-dotenv
 langchain-huggingface
-groq
+transformers
+bitsandbytes
+accelerate

@@ -10,4 +10,4 @@ INDEX_DIR = ROOT_DIR / "index"
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-LLM_MODEL = "llama-3.1-8b-instant"
+LLM_MODEL = "Qwen/Qwen2.5-3B-Instruct"

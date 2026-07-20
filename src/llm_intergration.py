@@ -1,67 +1,77 @@
-import os
 import sys
 from pathlib import Path
 
-# Ensure src/ is on the path so sibling modules (config, step6_search) are importable
-# regardless of which directory the script is launched from.
 _SRC_DIR = Path(__file__).resolve().parent
 if str(_SRC_DIR) not in sys.path:
     sys.path.insert(0, str(_SRC_DIR))
 
-from groq import Groq
-from dotenv import load_dotenv
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from config import LLM_MODEL, INDEX_DIR, PROCESSED_DIR
 
-load_dotenv(_SRC_DIR.parent / ".env")
+_tokenizer = None
+_model = None
 
-GROQ_MODEL = LLM_MODEL  
+
+def _load_model():
+    global _tokenizer, _model
+    if _model is not None:
+        return
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16
+    )
+    _tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
+    _model = AutoModelForCausalLM.from_pretrained(
+        LLM_MODEL,
+        quantization_config=bnb_config,
+        device_map="auto"
+    )
+
 
 def build_prompt(question: str, retrieved_chunks: list[dict]) -> str:
-    """Format retrieved chunks + question into a grounded RAG prompt."""
     context = "\n\n".join(
         f"[Context {i+1}]\n{c['text']}" for i, c in enumerate(retrieved_chunks)
     )
-    prompt = f"""You are a helpful assistant answering questions using ONLY the context below,
-which was retrieved from a Wikipedia article. If the answer isn't in the context,
-say you don't have enough information.
-
-{context}
-
-Question: {question}
-
-Answer clearly and concisely, grounded only in the context above."""
-    return prompt
+    return (
+        f"You are a helpful assistant answering questions using ONLY the context below,\n"
+        f"which was retrieved from a Wikipedia article. If the answer isn't in the context,\n"
+        f"say you don't have enough information.\n\n"
+        f"{context}\n\n"
+        f"Question: {question}\n\n"
+        f"Answer clearly and concisely, grounded only in the context above."
+    )
 
 
 def ask_llm(question: str, retrieved_chunks: list[dict]) -> str:
-    """
-    Send the question + retrieved context to Groq and return the answer string.
-    Reads GROQ_API_KEY from the environment (loaded via .env).
-    """
-    api_key = os.environ.get("GROQ_API_KEY")
-    if not api_key:
-        return (
-            "No GROQ_API_KEY found. Add it to your .env file"
-        )
-
-    client = Groq(api_key=api_key)
+    _load_model()
     prompt = build_prompt(question, retrieved_chunks)
 
-    response = client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        max_tokens=512,
-        temperature=0.2,   # low temp → factual, grounded answers
+    messages = [{"role": "user", "content": prompt}]
+    text = _tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True
     )
-    return response.choices[0].message.content.strip()
+
+    inputs = _tokenizer(text, return_tensors="pt").to(_model.device)
+    input_len = inputs["input_ids"].shape[1]
+
+    with torch.no_grad():
+        output = _model.generate(
+            **inputs,
+            max_new_tokens=256,
+            temperature=0.2,
+            do_sample=True,
+            pad_token_id=_tokenizer.eos_token_id
+        )
+
+    # Decode only the newly generated tokens (skip the prompt)
+    new_tokens = output[0][input_len:]
+    return _tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
 
 
 if __name__ == "__main__":
-    # Guarantee src/ is on sys.path however this script is launched
-    _src = str(Path(__file__).resolve().parent)
-    if _src not in sys.path:
-        sys.path.insert(0, _src)
-
     from retreival import load_embedder, search
     import faiss
     import json
